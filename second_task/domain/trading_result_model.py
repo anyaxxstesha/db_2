@@ -21,7 +21,9 @@ class TradingResult(BaseModel):
     count: Mapped[int] = mapped_column(nullable=True)
     date: Mapped[datetime] = mapped_column()
     created_on: Mapped[datetime] = mapped_column(server_default=func.now())
-    updated_on: Mapped[datetime] = mapped_column(server_onupdate=func.now(), server_default=func.now())
+    updated_on: Mapped[datetime] = mapped_column(
+        server_onupdate=func.now(), server_default=func.now()
+    )
 
     def __repr__(self) -> str:
         return (
