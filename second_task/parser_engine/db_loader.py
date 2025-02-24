@@ -8,6 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from second_task.config.database import Session
 from second_task.domain.trading_result_model import TradingResult
 
+
 async def load_chunk(chunk: list[dict[str, Any]]):
     async with Session.begin() as session:
         query = insert(TradingResult).values(chunk)
