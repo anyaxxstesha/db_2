@@ -21,8 +21,11 @@ async def get_last_trading_dates(
             .limit(days_amount)
         )
         return list(trades_by_date.all())
-    except SQLAlchemyError as e:
-        print("Error occurred while implementing query: ", e)
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error occurred while implementing query",
+        )
 
 
 async def get_dynamics(
@@ -59,8 +62,11 @@ async def get_dynamics(
                 detail="There are no trades available",
             )
         return result.all()
-    except SQLAlchemyError as e:
-        print("Error occurred while implementing query: ", e)
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error occurred while implementing query",
+        )
 
 
 async def get_trading_results(
@@ -89,14 +95,8 @@ async def get_trading_results(
                 detail="There are no trades available",
             )
         return result.all()
-    except SQLAlchemyError as e:
-        print("Error occurred while implementing query: ", e)
-
-
-async def main_test():
-    res = await get_trading_results("A100", "F")
-    for r in res:
-        print(r)
-
-
-# asyncio.run(main_test())
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error occurred while implementing query",
+        )
