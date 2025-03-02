@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from polyfactory.factories.pydantic_factory import ModelFactory
 from pydantic import BaseModel
 
 
@@ -17,3 +18,8 @@ class GetTradingResult(BaseModel):
     date: datetime
     created_on: datetime
     updated_on: datetime
+
+    @classmethod
+    def build(cls, **kwargs):
+        class Factory(ModelFactory[cls]): ...
+        return Factory.build(**kwargs)
