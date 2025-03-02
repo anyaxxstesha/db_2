@@ -56,12 +56,13 @@ async def get_dynamics(
         if delivery_basis_id:
             trades = trades.where(TradingResult.delivery_basis_id == delivery_basis_id)
         result = await session.scalars(trades)
-        if result is None:
+        result = result.all()
+        if not result:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="There are no trades available",
+                detail="No matching trades found",
             )
-        return result.all()
+        return result
     except SQLAlchemyError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -89,12 +90,13 @@ async def get_trading_results(
         if delivery_basis_id:
             trades = trades.where(TradingResult.delivery_basis_id == delivery_basis_id)
         result = await session.scalars(trades)
-        if result is None:
+        result = result.all()
+        if not result:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="There are no trades available",
             )
-        return result.all()
+        return result
     except SQLAlchemyError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
