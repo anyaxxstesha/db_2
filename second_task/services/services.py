@@ -21,8 +21,11 @@ async def get_last_trading_dates(
             .limit(days_amount)
         )
         return list(trades_by_date.all())
-    except SQLAlchemyError as e:
-        print("Error occurred while implementing query: ", e)
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error occurred while implementing query",
+        )
 
 
 async def get_dynamics(
@@ -53,14 +56,18 @@ async def get_dynamics(
         if delivery_basis_id:
             trades = trades.where(TradingResult.delivery_basis_id == delivery_basis_id)
         result = await session.scalars(trades)
-        if result is None:
+        result = result.all()
+        if not result:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="There are no trades available",
+                detail="No matching trades found",
             )
-        return result.all()
-    except SQLAlchemyError as e:
-        print("Error occurred while implementing query: ", e)
+        return result
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error occurred while implementing query",
+        )
 
 
 async def get_trading_results(
@@ -83,20 +90,15 @@ async def get_trading_results(
         if delivery_basis_id:
             trades = trades.where(TradingResult.delivery_basis_id == delivery_basis_id)
         result = await session.scalars(trades)
-        if result is None:
+        result = result.all()
+        if not result:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="There are no trades available",
             )
-        return result.all()
-    except SQLAlchemyError as e:
-        print("Error occurred while implementing query: ", e)
-
-
-async def main_test():
-    res = await get_trading_results("A100", "F")
-    for r in res:
-        print(r)
-
-
-# asyncio.run(main_test())
+        return result
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error occurred while implementing query",
+        )

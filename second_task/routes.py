@@ -98,10 +98,6 @@ async def get_detailed_trades_info(
         )
     await rd.set(redis_key, json_trades, ex=exp)
 
-    if trades is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No matching trades found"
-        )
     return trades
 
 
@@ -122,7 +118,6 @@ async def get_last_trades(
         return trades
 
     trades = await get_trading_results(db, oil_id, delivery_type_id, delivery_basis_id)
-
     trades = adapter.validate_python(trades, from_attributes=True)
     json_trades = adapter.dump_json(trades).decode()
     now = datetime.datetime.now()
@@ -140,9 +135,4 @@ async def get_last_trades(
         )
     await rd.set(redis_key, json_trades, ex=exp)
 
-    if trades is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No last trades found for the specified details",
-        )
     return trades
